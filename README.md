@@ -85,6 +85,7 @@ Production:
 * Convert to protobuf or json
 * Prints to the console/file
 * Sends to Kafka and partition
+* Sends to HTTP endpoints (ndjson)
 
 Monitoring via Prometheus metrics
 
@@ -151,6 +152,26 @@ To change the kafka compression type of the producer side configure the followin
 -transport.kafka.compression.type=gzip
 ```
 The list of codecs is available in the [Sarama documentation](https://pkg.go.dev/github.com/Shopify/sarama#CompressionCodec).
+
+To send ndjson over HTTP (for example to VictoriaLogs), use:
+
+```bash
+$ ./goflow2 -transport=http \
+  -transport.http.url=http://victorialogs:9428/insert/jsonline \
+  -format=json
+```
+
+The HTTP transport sends `application/x-ndjson` with gzip compression by default. Add headers with
+`-transport.http.header='Authorization: Bearer TOKEN'`.
+
+Batching is enabled by default and can be tuned with:
+`-transport.http.batch.size` (bytes) and `-transport.http.batch.interval` (duration).
+
+For higher throughput, use the async queue with:
+`-transport.http.queue.size` (number of batches) and `-transport.http.workers` (sender workers).
+
+Enable HTTP transport debug logs with:
+`-transport.http.debug=true` and `-loglevel=debug`.
 
 
 By default, the collector will listen for IPFIX/NetFlow V9/NetFlow V5 on port 2055

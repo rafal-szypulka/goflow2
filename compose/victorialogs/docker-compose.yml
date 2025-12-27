@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  goflow2:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+    depends_on:
+      - victorialogs
+    command:
+      - "-transport=http"
+      - "-transport.http.url=http://victorialogs:9428/insert/jsonline"
+      - "-transport.http.batch.size=2097152"
+      - "-transport.http.batch.interval=1s"
+      - "-transport.http.queue.size=1024"
+      - "-transport.http.workers=4"
+      - "-format=json"
+      - "-addr=:8080"
+    ports:
+      - "6343:6343/udp"
+      - "2055:2055/udp"
+      - "8080:8080"
+
+  victorialogs:
+    image: victoriametrics/victoria-logs:latest
+    ports:
+      - "9428:9428"
+    volumes:
+      - victorialogs-data:/victoria-logs-data
+
+volumes:
+  victorialogs-data:
