@@ -56,6 +56,7 @@ var (
 		"DstNet":         NetworkRenderer,
 
 		"icmp_name": ICMPRenderer,
+		"source_type": StaticSourceTypeRenderer,
 
 		"Ipv6RoutingHeaderAddresses": IPRenderer,
 	}
@@ -243,6 +244,11 @@ func NilRenderer(msg *ProtoProducerMessage, fieldName string, data interface{}) 
 		return hex.EncodeToString(dataC)
 	}
 	return data
+}
+
+// StaticSourceTypeRenderer injects a constant value for the source_type field.
+func StaticSourceTypeRenderer(msg *ProtoProducerMessage, fieldName string, data interface{}) interface{} {
+	return "netflow"
 }
 
 // StringRenderer converts a byte slice to a string.

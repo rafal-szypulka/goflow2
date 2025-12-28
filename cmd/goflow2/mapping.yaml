@@ -23,6 +23,7 @@ formatter:
     - src_mac
     - dst_mac
     # additional fields
+    - source_type
     - icmp_name # virtual column
     - csum # udp checksum
   key:
